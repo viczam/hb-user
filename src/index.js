@@ -3,7 +3,7 @@ import Joi from 'joi';
 import routes from './routes';
 import hapiAuthJwt2 from 'hapi-auth-jwt2';
 import pluginOptionsSchema from './schemas/pluginOptions';
-import validateJWT from './libs/validateJWT';
+import validateJWT from './lib/validateJWT';
 import setupServices from './services';
 import { generateCRUDServices } from 'octobus-rethinkdb';
 
