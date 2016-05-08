@@ -1,0 +1,69 @@
+import pkg from '../package.json';
+import Joi from 'joi';
+import routes from './routes';
+import hapiAuthJwt2 from 'hapi-auth-jwt2';
+import pluginOptionsSchema from './schemas/pluginOptions';
+import validateJWT from './libs/validateJWT';
+import setupServices from './services';
+import { generateCRUDServices } from 'octobus-rethinkdb';
+
+export function register(server, options, next) {
+  const { error, value } = Joi.validate(options, pluginOptionsSchema);
+  if (error) {
+    return next(error);
+  }
+
+  const pluginOptions = value;
+  const { defaultUser, conn, r } = pluginOptions;
+
+  server.dependency(['hapi-octobus'], ({}, done) => {
+    const dispatcher = server.plugins['hapi-octobus'].eventDispatcher;
+
+    const servicesPromise = setupServices({
+      ...pluginOptions,
+      jwt: pluginOptions.jwt,
+      dispatcher,
+      generateCRUDServices,
+      conn,
+      r,
+    });
+
+    return server.register([
+      hapiAuthJwt2,
+    ], (err) => {
+      if (err) {
+        return done(err);
+      }
+
+      server.auth.strategy('jwt', 'jwt', {
+        key: pluginOptions.jwt.key,
+        validateFunc: validateJWT(dispatcher),
+        verifyOptions: {
+          algorithms: ['HS256'],
+        },
+      });
+
+      if (pluginOptions.defaultUser) {
+        servicesPromise.then(() => {
+          dispatcher.dispatch('entity.User.findOne', {
+            email: defaultUser.email,
+          }).then((user) => {
+            if (!user) {
+              dispatcher.dispatch('entity.User.create', defaultUser);
+            }
+          });
+        });
+      }
+
+      server.route(routes);
+
+      return done();
+    });
+  });
+
+  return next();
+}
+
+register.attributes = {
+  pkg,
+};
