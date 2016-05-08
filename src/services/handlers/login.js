@@ -1,12 +1,12 @@
 import Joi from 'joi';
 import Boom from 'boom';
 
-export const schema = Joi.object().keys({
-  username: Joi.string().required(),
-  password: Joi.string().required(),
-}).options({
-  allowUnknown: true,
-});
+export const config = {
+  schema: Joi.object().keys({
+    username: Joi.string().required(),
+    password: Joi.string().required(),
+  }),
+};
 
 export default async ({ params, dispatch }) => {
   const { username, password } = params;
