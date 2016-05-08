@@ -3,7 +3,7 @@ export default (dispatcher) => (decodedToken, request, cb) => {
     cb(null, false);
   } else {
     dispatcher.dispatch('entity.User.findById', decodedToken.id, (err, result) => {
-      cb(null, err ? false : !!result);
+      cb(null, !err && !!result);
     });
   }
 };
