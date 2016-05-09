@@ -7,16 +7,12 @@ export const login = {
   },
   async handler(request, reply) {
     const { eventDispatcher } = request;
+    const { dispatch } = eventDispatcher;
 
     try {
-      const user = await eventDispatcher.dispatch('User.login', request.payload);
-      const { id, username } = user;
-      const token = await eventDispatcher.dispatch('User.createToken', { id, username });
-
-      reply({
-        ..._.pick(user, ['username', 'email', 'id', 'updatedAt', 'createdAt']),
-        token,
-      });
+      const result = await dispatch('User.login', request.payload);
+      const user = await dispatch('User.dump', result);
+      reply(user);
     } catch (err) {
       reply(err);
     }

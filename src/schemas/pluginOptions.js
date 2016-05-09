@@ -27,7 +27,7 @@ export default {
   }),
   userSchema: Joi.object().default(userSchema),
   rethinkDb: Joi.object().keys({
-    r: Joi.Object().required(),
-    conn: Joi.Object().required(),
+    r: Joi.any().required(),
+    conn: Joi.any().required(),
   }).required(),
 };

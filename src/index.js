@@ -14,25 +14,21 @@ export function register(server, options, next) {
   }
 
   const pluginOptions = value;
-  const { defaultUser, conn, r } = pluginOptions;
+  const { defaultUser, rethinkDb } = pluginOptions;
+  const { conn, r } = rethinkDb;
+  const dispatcher = server.plugins['hapi-octobus'].eventDispatcher;
 
-  server.dependency(['hapi-octobus'], ({}, done) => {
-    const dispatcher = server.plugins['hapi-octobus'].eventDispatcher;
-
-    const servicesPromise = setupServices({
-      ...pluginOptions,
-      jwt: pluginOptions.jwt,
-      dispatcher,
-      generateCRUDServices,
-      conn,
-      r,
-    });
-
-    return server.register([
-      hapiAuthJwt2,
-    ], (err) => {
+  return setupServices({
+    ...pluginOptions,
+    jwt: pluginOptions.jwt,
+    dispatcher,
+    generateCRUDServices,
+    conn,
+    r,
+  }).then(() => {
+    server.register(hapiAuthJwt2, (err) => {
       if (err) {
-        return done(err);
+        return next(err);
       }
 
       server.auth.strategy('jwt', 'jwt', {
@@ -44,26 +40,23 @@ export function register(server, options, next) {
       });
 
       if (pluginOptions.defaultUser) {
-        servicesPromise.then(() => {
-          dispatcher.dispatch('entity.User.findOne', {
-            email: defaultUser.email,
-          }).then((user) => {
-            if (!user) {
-              dispatcher.dispatch('entity.User.create', defaultUser);
-            }
-          });
+        dispatcher.dispatch('entity.User.findOne', {
+          email: defaultUser.email,
+        }).then((user) => {
+          if (!user) {
+            dispatcher.dispatch('entity.User.create', defaultUser);
+          }
         });
       }
 
       server.route(routes);
 
-      return done();
+      return next();
     });
-  });
-
-  return next();
+  }).catch(next);
 }
 
 register.attributes = {
   pkg,
+  dependencies: ['hapi-octobus'],
 };

@@ -18,7 +18,5 @@ export default ({ params, dispatch, next }) => {
     }).then((hashedPassword) => {
       nextParams.password = hashedPassword;
     })
-  ).then(() => {
-    next(nextParams);
-  });
+  ).then(() => next(nextParams));
 };

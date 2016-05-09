@@ -5,7 +5,7 @@ export const config = {
   schema: Joi.object().keys({
     username: Joi.string().required(),
     password: Joi.string().required(),
-  }),
+  }).required(),
 };
 
 export default async ({ params, dispatch }) => {
@@ -23,8 +23,15 @@ export default async ({ params, dispatch }) => {
     throw Boom.badRequest('Incorrect password!');
   }
 
-  return await dispatch('entity.User.update', {
+  const updatedUser = await dispatch('entity.User.update', {
     ...user,
     lastLogin: new Date(),
   });
+
+  const token = await dispatch('User.createToken', { id: updatedUser.id, username });
+
+  return {
+    ...updatedUser,
+    token,
+  };
 };
