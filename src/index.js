@@ -20,7 +20,6 @@ export function register(server, options, next) {
 
   return setupServices({
     ...pluginOptions,
-    jwt: pluginOptions.jwt,
     dispatcher,
     generateCRUDServices,
     conn,
