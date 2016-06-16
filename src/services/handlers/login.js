@@ -11,7 +11,9 @@ export const config = {
 export default async ({ params, dispatch }) => {
   const { username, password } = params;
 
-  const user = await dispatch('entity.User.findOne', { username });
+  const user = await dispatch('entity.User.findOne', {
+    query: { username },
+  });
 
   if (!user) {
     throw Boom.badRequest('User not found!');
@@ -23,12 +25,12 @@ export default async ({ params, dispatch }) => {
     throw Boom.badRequest('Incorrect password!');
   }
 
-  const updatedUser = await dispatch('entity.User.update', {
+  const updatedUser = await dispatch('entity.User.replaceOne', {
     ...user,
     lastLogin: new Date(),
   });
 
-  const token = await dispatch('User.createToken', { id: updatedUser.id, username });
+  const token = await dispatch('User.createToken', { id: updatedUser._id, username });
 
   return {
     ...updatedUser,

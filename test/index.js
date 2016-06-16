@@ -2,18 +2,18 @@ import { Server } from 'hapi';
 import { expect } from 'chai';
 import * as hbUser from '../src';
 import * as HapiOctobus from 'hapi-octobus';
-import r from 'rethinkdb';
+import { MongoClient } from 'mongodb';
+
+const databaseName = 'hbUserTest';
 
 describe('register()', () => {
   let server;
-  let conn;
+  let db;
   let dispatcher;
 
   before(() => (
-    r.connect({
-      db: 'test',
-    }).then((_conn) => {
-      conn = _conn;
+    MongoClient.connect(`mongodb://localhost:27017/${databaseName}`).then((_db) => {
+      db = _db;
     })
   ));
 
@@ -25,7 +25,7 @@ describe('register()', () => {
     }, {
       register: hbUser.register,
       options: {
-        rethinkDb: { r, conn },
+        db,
         jwt: {
           key: 'I83AtkWR1FaPTKOObwDWtXP19JucJWBmLLva3K7XczEIcELzcrB1OyARV1us5z1',
         },
@@ -48,9 +48,15 @@ describe('register()', () => {
     });
   });
 
+  after(() => {
+    db.close();
+  });
+
   it('creates a default user', () => (
     dispatcher.dispatch('entity.User.findOne', {
-      username: 'viczam',
+      query: {
+        username: 'viczam',
+      },
     }).then((user) => {
       expect(user).not.to.be.empty();
       expect(user.email).to.equal('zamfir.victor@gmail.com');
@@ -82,7 +88,7 @@ describe('register()', () => {
         const tsAfter = Date.now();
 
         expect(user).to.exist();
-        expect(user.id).to.exist();
+        expect(user._id).to.exist();
         expect(user.token).to.exist();
         expect(user.lastLogin).to.exist();
         expect(user.lastLogin).to.be.at.least(tsBefore).and.at.most(tsAfter);
