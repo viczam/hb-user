@@ -5,7 +5,7 @@ export const find = {
     const { eventDispatcher } = request;
 
     try {
-      const users = await eventDispatcher.dispatch('entity.User.find');
+      const users = await eventDispatcher.dispatch('entity.User.findMany').then((c) => c.toArray());
       reply(users);
     } catch (err) {
       reply(err);

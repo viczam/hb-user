@@ -15,19 +15,9 @@ export default {
     password: Joi.string().min(3).max(50).required(),
     email: Joi.string().email().required(),
   }),
-  tableName: Joi.any().default('User'),
-  tableIndexes: Joi.object().default({
-    username: 'username',
-    email: 'email',
-    fullName: ['firstName', 'lastName'],
-    status: 'status',
-    roles: {
-      multi: true,
-    },
-  }),
-  userSchema: Joi.object().default(userSchema),
-  rethinkDb: Joi.object().keys({
-    r: Joi.any().required(),
-    conn: Joi.any().required(),
-  }).required(),
+  user: Joi.object().keys({
+    schema: Joi.object().default(userSchema),
+    collectionName: Joi.string().default('User'),
+  }).default({}),
+  db: Joi.object().required(),
 };

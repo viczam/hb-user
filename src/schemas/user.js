@@ -1,6 +1,7 @@
 import Joi from 'joi';
 
 export default {
+  _id: Joi.object(),
   username: Joi.string().required(),
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),

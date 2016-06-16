@@ -5,7 +5,6 @@ import hapiAuthJwt2 from 'hapi-auth-jwt2';
 import pluginOptionsSchema from './schemas/pluginOptions';
 import validateJWT from './lib/validateJWT';
 import setupServices from './services';
-import { generateCRUDServices } from 'octobus-rethinkdb';
 
 export function register(server, options, next) {
   const { error, value } = Joi.validate(options, pluginOptionsSchema);
@@ -14,45 +13,45 @@ export function register(server, options, next) {
   }
 
   const pluginOptions = value;
-  const { defaultUser, rethinkDb } = pluginOptions;
-  const { conn, r } = rethinkDb;
+  const { defaultUser } = pluginOptions;
   const dispatcher = server.plugins['hapi-octobus'].eventDispatcher;
 
-  return setupServices({
+  setupServices({
     ...pluginOptions,
     dispatcher,
-    generateCRUDServices,
-    conn,
-    r,
-  }).then(() => {
-    server.register(hapiAuthJwt2, (err) => {
-      if (err) {
-        return next(err);
-      }
+  });
 
-      server.auth.strategy('jwt', 'jwt', {
-        key: pluginOptions.jwt.key,
-        validateFunc: validateJWT(dispatcher),
-        verifyOptions: {
-          algorithms: ['HS256'],
-        },
-      });
+  return server.register(hapiAuthJwt2, (err) => {
+    if (err) {
+      return next(err);
+    }
 
-      if (pluginOptions.defaultUser) {
-        dispatcher.dispatch('entity.User.findOne', {
-          email: defaultUser.email,
-        }).then((user) => {
-          if (!user) {
-            dispatcher.dispatch('entity.User.create', defaultUser);
-          }
-        });
-      }
-
-      server.route(routes);
-
-      return next();
+    server.auth.strategy('jwt', 'jwt', {
+      key: pluginOptions.jwt.key,
+      validateFunc: validateJWT(dispatcher),
+      verifyOptions: {
+        algorithms: ['HS256'],
+      },
     });
-  }).catch(next);
+
+    server.route(routes);
+
+    if (pluginOptions.defaultUser) {
+      return dispatcher.dispatch('entity.User.findOne', {
+        query: {
+          email: defaultUser.email,
+        },
+      }).then((user) => {
+        if (!user) {
+          dispatcher.dispatch('entity.User.createOne', defaultUser);
+        }
+
+        next();
+      }).catch(next);
+    }
+
+    return next();
+  });
 }
 
 register.attributes = {

@@ -1,29 +1,28 @@
+import { generateCRUDServices } from 'octobus-mongodb';
 import hashPassword, { config as hashPasswordConfig } from './handlers/hashPassword';
 import createToken, { config as createTokenConfig } from './handlers/createToken';
 import save from './handlers/save';
 import login, { config as loginConfig } from './handlers/login';
 import dump from './handlers/dump';
 
+const entityNamespace = 'entity.User';
+
 export default ({
-  dispatcher, generateCRUDServices, jwt, r, conn, userSchema, tableName, tableIndexes,
-}) => (
-  generateCRUDServices('entity.User', {
-    schema: userSchema,
-    indexes: tableIndexes,
-    tableName,
-    r,
-    conn,
-  }).then(({ namespace, map }) => {
-    dispatcher.subscribeMap(namespace, map);
+  dispatcher, jwt, user: { schema, collectionName }, db,
+}) => {
+  dispatcher.subscribeMap(entityNamespace, generateCRUDServices(entityNamespace, {
+    db,
+    schema,
+    collectionName,
+  }));
 
-    dispatcher.subscribe('entity.User.save', save);
+  dispatcher.subscribe(`${entityNamespace}.save`, save);
 
-    dispatcher.subscribe('User.hashPassword', hashPassword, hashPasswordConfig);
+  dispatcher.subscribe('User.hashPassword', hashPassword, hashPasswordConfig);
 
-    dispatcher.subscribe('User.createToken', createToken(jwt), createTokenConfig);
+  dispatcher.subscribe('User.createToken', createToken(jwt), createTokenConfig);
 
-    dispatcher.subscribe('User.login', login, loginConfig);
+  dispatcher.subscribe('User.login', login, loginConfig);
 
-    dispatcher.subscribe('User.dump', dump);
-  })
-);
+  dispatcher.subscribe('User.dump', dump);
+};
