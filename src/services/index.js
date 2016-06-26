@@ -10,7 +10,7 @@ const entityNamespace = 'entity.User';
 export default ({
   dispatcher, jwt, user: { schema, collectionName }, db,
 }) => {
-  dispatcher.subscribeMap(entityNamespace, generateCRUDServices(entityNamespace, {
+  dispatcher.subscribeMap(entityNamespace, generateCRUDServices(dispatcher, entityNamespace, {
     db,
     schema,
     collectionName,
