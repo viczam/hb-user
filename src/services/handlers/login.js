@@ -1,14 +1,13 @@
 import Joi from 'joi';
 import Boom from 'boom';
+import { decorators } from 'octobus.js';
 
-export const config = {
-  schema: Joi.object().keys({
-    username: Joi.string().required(),
-    password: Joi.string().required(),
-  }).required(),
-};
+const schema = Joi.object().keys({
+  username: Joi.string().required(),
+  password: Joi.string().required(),
+}).required();
 
-export default async ({ params, dispatch }) => {
+const handler = async ({ params, dispatch }) => {
   const { username, password } = params;
 
   const user = await dispatch('entity.User.findOne', {
@@ -37,3 +36,5 @@ export default async ({ params, dispatch }) => {
     token,
   };
 };
+
+export default decorators.withSchema(handler, schema);

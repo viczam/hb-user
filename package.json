@@ -38,7 +38,8 @@
     "joi": "8.0.5",
     "jsonwebtoken": "^5.7.0",
     "lodash": "4.11.2",
-    "octobus-mongodb": "0.6.1"
+    "octobus.js": "0.9.0",
+    "octobus-mongodb": "0.6.2"
   },
   "devDependencies": {
     "babel-cli": "^6.6.5",
@@ -57,9 +58,8 @@
     "eslint-config-airbnb": "^6.1.0",
     "eslint-plugin-react": "^4.2.0",
     "hapi": "13.x.x",
-    "hapi-octobus": "0.2.0",
+    "hapi-octobus": "0.3.1",
     "mocha": "^2.4.5",
-    "octobus.js": "0.7.1",
     "rimraf": "2.5.2",
     "semantic-release": "^4.3.5",
     "sinon": "^1.17.3",

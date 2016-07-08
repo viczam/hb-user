@@ -1,9 +1,5 @@
 import { generateCRUDServices } from 'octobus-mongodb';
-import hashPassword, { config as hashPasswordConfig } from './handlers/hashPassword';
-import createToken, { config as createTokenConfig } from './handlers/createToken';
-import save from './handlers/save';
-import login, { config as loginConfig } from './handlers/login';
-import dump from './handlers/dump';
+import * as handlers from './handlers';
 
 const entityNamespace = 'entity.User';
 
@@ -16,13 +12,13 @@ export default ({
     collectionName,
   }));
 
-  dispatcher.subscribe(`${entityNamespace}.save`, save);
+  dispatcher.subscribe(`${entityNamespace}.save`, handlers.save);
 
-  dispatcher.subscribe('User.hashPassword', hashPassword, hashPasswordConfig);
+  dispatcher.subscribe('User.hashPassword', handlers.hashPassword);
 
-  dispatcher.subscribe('User.createToken', createToken(jwt), createTokenConfig);
+  dispatcher.subscribe('User.createToken', handlers.createToken(jwt));
 
-  dispatcher.subscribe('User.login', login, loginConfig);
+  dispatcher.subscribe('User.login', handlers.login);
 
-  dispatcher.subscribe('User.dump', dump);
+  dispatcher.subscribe('User.dump', handlers.dump);
 };
