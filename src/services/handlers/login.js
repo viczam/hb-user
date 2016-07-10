@@ -2,16 +2,14 @@ import Joi from 'joi';
 import Boom from 'boom';
 import { decorators } from 'octobus.js';
 
-const { withSchema, withLookups } = decorators;
+const { withSchema, withLookups, toHandler } = decorators;
 
 const schema = Joi.object().keys({
   username: Joi.string().required(),
   password: Joi.string().required(),
 }).required();
 
-const handler = async ({ params, User, UserEntity }) => {
-  const { username, password } = params;
-
+const handler = async ({ username, password, User, UserEntity }) => {
   const user = await UserEntity.findOne({ query: { username } });
 
   if (!user) {
@@ -39,7 +37,7 @@ const handler = async ({ params, User, UserEntity }) => {
 
 export default withSchema(
   withLookups(
-    handler,
+    toHandler(handler),
     {
       User: 'User',
       UserEntity: 'entity.User',
