@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import jwt from 'jsonwebtoken';
 import { decorators } from 'octobus.js';
+const { withSchema, toHandler } = decorators;
 
 const schema = Joi.object().keys({
   id: Joi.required(),
@@ -9,10 +10,11 @@ const schema = Joi.object().keys({
 }).required();
 
 export default ({ key, options: defaultOptions }) =>
-  decorators.withSchema(
-    ({ params }) => {
-      const { id, username, options } = params;
-      return jwt.sign({ id, username }, key, { ...defaultOptions, ...options });
-    },
+  withSchema(
+    toHandler(
+      ({ id, username, options }) => (
+        jwt.sign({ id, username }, key, { ...defaultOptions, ...options })
+      )
+    ),
     schema
   );

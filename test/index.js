@@ -140,7 +140,17 @@ describe('register()', () => {
           expect(res.result.username).to.equal('viczam');
           expect(res.result.email).to.equal('zamfir.victor@gmail.com');
           expect(res.result.password).not.to.exist();
-          done();
+
+          server.inject({
+            method: 'GET',
+            url: '/users',
+            headers: {
+              Authorization: res.result.token,
+            },
+          }, ({ statusCode }) => {
+            expect(statusCode).to.equal(200);
+            done();
+          });
         });
       });
     });
