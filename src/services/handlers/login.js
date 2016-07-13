@@ -2,7 +2,7 @@ import Joi from 'joi';
 import Boom from 'boom';
 import { decorators } from 'octobus.js';
 
-const { withSchema, withLookups, toHandler } = decorators;
+const { withSchema, withLookups, withHandler } = decorators;
 
 const schema = Joi.object().keys({
   username: Joi.string().required(),
@@ -37,7 +37,7 @@ const handler = async ({ username, password, User, UserEntity }) => {
 
 export default withSchema(
   withLookups(
-    toHandler(handler),
+    withHandler(handler),
     {
       User: 'User',
       UserEntity: 'entity.User',
