@@ -12,5 +12,5 @@ export default {
     db: Joi.object().required(),
     schema: Joi.object().default(userSchema),
     collectionName: Joi.string().default('User'),
-  }).default({}).required(),
+  }).default({}).unknown(true).required(),
 };
