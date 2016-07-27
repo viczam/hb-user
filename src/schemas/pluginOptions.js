@@ -8,9 +8,9 @@ export default {
       expiresIn: Joi.alternatives().try(Joi.string(), Joi.number()).default('1d'),
     },
   }),
-  user: Joi.object().keys({
+  serviceOptions: Joi.object().keys({
+    db: Joi.object().required(),
     schema: Joi.object().default(userSchema),
     collectionName: Joi.string().default('User'),
-  }).default({}),
-  db: Joi.object().required(),
+  }).default({}).required(),
 };

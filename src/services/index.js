@@ -4,13 +4,12 @@ import * as handlers from './handlers';
 const entityNamespace = 'entity.User';
 
 export default ({
-  dispatcher, jwt, user: { schema, collectionName }, db,
+  dispatcher, jwt, serviceOptions,
 }) => {
-  dispatcher.subscribeMap(entityNamespace, generateCRUDServices(dispatcher, entityNamespace, {
-    db,
-    schema,
-    collectionName,
-  }));
+  dispatcher.subscribeMap(
+    entityNamespace,
+    generateCRUDServices(dispatcher, entityNamespace, serviceOptions)
+  );
 
   dispatcher.subscribe(`${entityNamespace}.save`, handlers.save);
 

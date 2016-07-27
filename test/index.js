@@ -6,8 +6,8 @@ import { MongoClient } from 'mongodb';
 
 const databaseName = 'hbUserTest';
 
-const findOrCreateUser = (userData, dispatcher) => {
-  return dispatcher.dispatch('entity.User.findOne', {
+const findOrCreateUser = (userData, dispatcher) => (
+  dispatcher.dispatch('entity.User.findOne', {
     query: {
       email: userData.email,
     },
@@ -17,8 +17,8 @@ const findOrCreateUser = (userData, dispatcher) => {
     }
 
     return dispatcher.dispatch('entity.User.createOne', userData);
-  });
-};
+  })
+);
 
 describe('register()', () => {
   let server;
@@ -41,7 +41,9 @@ describe('register()', () => {
     }, {
       register: hbUser.register,
       options: {
-        db,
+        serviceOptions: {
+          db,
+        },
         jwt: {
           key: 'I83AtkWR1FaPTKOObwDWtXP19JucJWBmLLva3K7XczEIcELzcrB1OyARV1us5z1',
         },
