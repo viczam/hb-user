@@ -13,7 +13,6 @@ export function register(server, options, next) {
   }
 
   const pluginOptions = value;
-  const { defaultUser } = pluginOptions;
   const dispatcher = server.plugins['hapi-octobus'].eventDispatcher;
 
   setupServices({
@@ -35,20 +34,6 @@ export function register(server, options, next) {
     });
 
     server.route(routes);
-
-    if (pluginOptions.defaultUser) {
-      return dispatcher.dispatch('entity.User.findOne', {
-        query: {
-          email: defaultUser.email,
-        },
-      }).then((user) => {
-        if (!user) {
-          dispatcher.dispatch('entity.User.createOne', defaultUser);
-        }
-
-        next();
-      }).catch(next);
-    }
 
     return next();
   });

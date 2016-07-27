@@ -6,6 +6,20 @@ import { MongoClient } from 'mongodb';
 
 const databaseName = 'hbUserTest';
 
+const findOrCreateUser = (userData, dispatcher) => {
+  return dispatcher.dispatch('entity.User.findOne', {
+    query: {
+      email: userData.email,
+    },
+  }).then((user) => {
+    if (user) {
+      return user;
+    }
+
+    return dispatcher.dispatch('entity.User.createOne', userData);
+  });
+};
+
 describe('register()', () => {
   let server;
   let db;
@@ -20,6 +34,8 @@ describe('register()', () => {
   beforeEach((done) => {
     server = new Server();
     server.connection();
+
+
     server.register([{
       register: HapiOctobus.register,
     }, {
@@ -29,13 +45,6 @@ describe('register()', () => {
         jwt: {
           key: 'I83AtkWR1FaPTKOObwDWtXP19JucJWBmLLva3K7XczEIcELzcrB1OyARV1us5z1',
         },
-        defaultUser: {
-          username: 'viczam',
-          firstName: 'Victor',
-          lastName: 'Zamfir',
-          email: 'zamfir.victor@gmail.com',
-          password: 'admin',
-        },
       },
     }], (err) => {
       if (err) {
@@ -44,7 +53,13 @@ describe('register()', () => {
 
       dispatcher = server.plugins['hapi-octobus'].eventDispatcher;
 
-      return done();
+      return findOrCreateUser({
+        username: 'viczam',
+        firstName: 'Victor',
+        lastName: 'Zamfir',
+        email: 'zamfir.victor@gmail.com',
+        password: 'admin',
+      }, dispatcher).then(() => done(), done);
     });
   });
 
