@@ -7,7 +7,7 @@ const schema = Joi.object().keys({
   id: Joi.required(),
   username: Joi.string().required(),
   options: Joi.object().default({}),
-}).required();
+}).unknown(true).required();
 
 export default ({ key, options: defaultOptions }) =>
   withSchema(
