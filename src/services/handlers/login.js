@@ -27,7 +27,8 @@ const handler = async ({ username, password, User, UserEntity }) => {
     lastLogin: new Date(),
   });
 
-  const token = await User.createToken({ id: updatedUser._id, username });
+  const serializedUser = await User.serialize(updatedUser);
+  const token = await User.createToken(serializedUser);
 
   return {
     ...updatedUser,
