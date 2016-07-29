@@ -20,4 +20,6 @@ export default ({
   dispatcher.subscribe('User.login', handlers.login);
 
   dispatcher.subscribe('User.dump', handlers.dump);
+
+  dispatcher.subscribe('User.serialize', handlers.serialize);
 };

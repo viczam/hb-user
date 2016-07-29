@@ -12,9 +12,11 @@ const schema = Joi.object().keys({
 export default ({ key, options: defaultOptions }) =>
   withSchema(
     withHandler(
-      ({ id, username, options }) => (
-        jwt.sign({ id, username }, key, { ...defaultOptions, ...options })
-      )
+      async (args) => {
+        const { options, dispatch, ...user } = args;
+        const serializedUser = await dispatch('User.serialize', user);
+        return jwt.sign(serializedUser, key, { ...defaultOptions, ...options });
+      }
     ),
     schema
   );
