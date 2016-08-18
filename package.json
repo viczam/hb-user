@@ -1,6 +1,6 @@
 {
   "name": "hb-user",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "Hapi.js user plugin that integrates octobus.js and octobus-rethinkdb",
   "main": "dist/index.js",
   "scripts": {
@@ -38,8 +38,8 @@
     "joi": "8.0.5",
     "jsonwebtoken": "^5.7.0",
     "lodash": "4.11.2",
-    "octobus.js": "0.12.1",
-    "octobus-mongodb": "0.6.4"
+    "octobus.js": "0.13.0",
+    "octobus-mongodb": "0.6.5"
   },
   "devDependencies": {
     "babel-cli": "^6.6.5",
@@ -58,7 +58,7 @@
     "eslint-config-airbnb": "^6.1.0",
     "eslint-plugin-react": "^4.2.0",
     "hapi": "13.x.x",
-    "hapi-octobus": "0.3.5",
+    "hapi-octobus": "0.3.6",
     "mocha": "^2.4.5",
     "rimraf": "2.5.2",
     "semantic-release": "^4.3.5",
