@@ -1,6 +1,6 @@
 {
   "name": "hb-user",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "description": "Hapi.js user plugin that integrates octobus.js and octobus-rethinkdb",
   "main": "dist/index.js",
   "scripts": {
