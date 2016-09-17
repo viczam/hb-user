@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import bcrypt from 'bcryptjs';
 import { decorators } from 'octobus.js';
+
 const { withSchema, withHandler } = decorators;
 
 const schema = Joi.object().keys({

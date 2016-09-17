@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import jwt from 'jsonwebtoken';
 import { decorators } from 'octobus.js';
+
 const { withSchema } = decorators;
 
 const schema = Joi.object().keys({

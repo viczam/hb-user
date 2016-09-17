@@ -1,8 +1,8 @@
 import { Server } from 'hapi';
 import { expect } from 'chai';
-import * as hbUser from '../src';
 import * as HapiOctobus from 'hapi-octobus';
 import { MongoClient } from 'mongodb';
+import * as hbUser from '../src';
 
 const databaseName = 'hbUserTest';
 
@@ -143,7 +143,7 @@ describe('register()', () => {
         });
       });
 
-      it('valid credentials', (done) => {
+      it('valid credentials', () => (
         server.inject({
           method: 'POST',
           url: '/login',
@@ -151,25 +151,26 @@ describe('register()', () => {
             username: 'viczam',
             password: 'admin',
           },
-        }, (res) => {
+        }).then((res) => {
           expect(res.statusCode).to.equal(200);
           expect(res.result.token).to.exist();
           expect(res.result.username).to.equal('viczam');
           expect(res.result.email).to.equal('zamfir.victor@gmail.com');
           expect(res.result.password).not.to.exist();
 
-          server.inject({
+          return server.inject({
             method: 'GET',
             url: '/users',
             headers: {
               Authorization: res.result.token,
             },
-          }, ({ statusCode }) => {
+          }).then(({ statusCode }) => {
             expect(statusCode).to.equal(200);
-            done();
+          }, (err) => {
+            expect(err).not.to.exist();
           });
-        });
-      });
+        })
+      ));
     });
   });
 });

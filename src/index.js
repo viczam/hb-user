@@ -1,12 +1,12 @@
-import pkg from '../package.json';
 import Joi from 'joi';
-import routes from './routes';
 import hapiAuthJwt2 from 'hapi-auth-jwt2';
+import pkg from '../package.json';
+import routes from './routes';
 import pluginOptionsSchema from './schemas/pluginOptions';
 import validateJWT from './lib/validateJWT';
 import setupServices from './services';
 
-export function register(server, options, next) {
+export const register = (server, options, next) => { // eslint-disable-line
   const { error, value } = Joi.validate(options, pluginOptionsSchema);
   if (error) {
     return next(error);
@@ -20,11 +20,7 @@ export function register(server, options, next) {
     dispatcher,
   });
 
-  return server.register(hapiAuthJwt2, (err) => {
-    if (err) {
-      return next(err);
-    }
-
+  return server.register(hapiAuthJwt2).then(() => {
     server.auth.strategy('jwt', 'jwt', {
       key: pluginOptions.jwt.key,
       validateFunc: validateJWT(dispatcher),
@@ -36,8 +32,8 @@ export function register(server, options, next) {
     server.route(routes);
 
     return next();
-  });
-}
+  }, next);
+};
 
 register.attributes = {
   pkg,
