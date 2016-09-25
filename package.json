@@ -39,8 +39,9 @@
     "joi": "~9.0.4",
     "jsonwebtoken": "~7.1.9",
     "lodash": "~4.15.0",
+    "octobus-mongodb": "0.7.1",
     "octobus.js": "0.16.1",
-    "octobus-mongodb": "0.7.1"
+    "sinon": "1.17.6"
   },
   "devDependencies": {
     "babel-cli": "~6.14.0",

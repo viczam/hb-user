@@ -30,9 +30,7 @@ export const register = (server, options, next) => { // eslint-disable-line
     });
 
     server.route(routes);
-
-    return next();
-  }, next);
+  }).then(next, next);
 };
 
 register.attributes = {
