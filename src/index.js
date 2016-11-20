@@ -13,10 +13,21 @@ export const register = (server, options, next) => { // eslint-disable-line
   }
 
   const dispatcher = server.plugins['hapi-octobus'].eventDispatcher;
+  const { lookup } = dispatcher;
 
   setupServices({
     ...pluginOptions,
     dispatcher,
+  });
+
+  const UserEntity = lookup('entity.User');
+  const User = lookup('User');
+
+  server.expose('UserEntity', UserEntity);
+  server.expose('User', User);
+
+  server.bind({
+    User,
   });
 
   return server.register(hapiAuthJwt2).then(() => {

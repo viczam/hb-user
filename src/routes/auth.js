@@ -6,12 +6,11 @@ export default [
     path: '/login',
     method: 'POST',
     async handler(request, reply) {
-      const { eventDispatcher } = request;
-      const { dispatch } = eventDispatcher;
+      const { User } = this;
 
       try {
-        const result = await dispatch('User.login', request.payload);
-        const user = await dispatch('User.dump', result);
+        const result = await User.login(request.payload);
+        const user = await User.dump(result);
         reply(user);
       } catch (err) {
         reply(err);
