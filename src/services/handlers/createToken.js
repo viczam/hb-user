@@ -11,10 +11,9 @@ const schema = Joi.object().keys({
 }).unknown(true).required();
 
 export default ({ key, options: defaultOptions }) =>
-  withSchema(
+  withSchema(schema)(
     async ({ params }) => {
       const { options, ...user } = params;
       return jwt.sign(user, key, { ...defaultOptions, ...options });
     },
-    schema
   );

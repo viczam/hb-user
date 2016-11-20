@@ -8,7 +8,7 @@ export default ({
 }) => {
   dispatcher.subscribeMap(
     entityNamespace,
-    generateCRUDServices(dispatcher, entityNamespace, serviceOptions)
+    generateCRUDServices(dispatcher, entityNamespace, serviceOptions),
   );
 
   dispatcher.subscribe(`${entityNamespace}.save`, handlers.save);

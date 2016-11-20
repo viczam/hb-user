@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import Boom from 'boom';
-import { decorators } from 'octobus.js';
+import { decorators, applyDecorators } from 'octobus.js';
 
 const { withSchema, withLookups, withHandler } = decorators;
 
@@ -36,13 +36,11 @@ const handler = async ({ username, password, User, UserEntity }) => {
   };
 };
 
-export default withSchema(
-  withLookups(
-    withHandler(handler),
-    {
-      User: 'User',
-      UserEntity: 'entity.User',
-    },
-  ),
-  schema
-);
+export default applyDecorators([
+  withSchema(schema),
+  withLookups({
+    User: 'User',
+    UserEntity: 'entity.User',
+  }),
+  withHandler,
+], handler);
