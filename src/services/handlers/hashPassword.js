@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import bcrypt from 'bcryptjs';
-import { decorators } from 'octobus.js';
+import { decorators, applyDecorators } from 'octobus.js';
 
 const { withSchema, withHandler } = decorators;
 
@@ -13,4 +13,7 @@ const handler = ({ password, salt }, cb) => {
   bcrypt.hash(password, salt, cb);
 };
 
-export default withSchema(withHandler(handler), schema);
+export default applyDecorators([
+  withSchema(schema),
+  withHandler,
+], handler);
