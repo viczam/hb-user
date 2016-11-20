@@ -6,19 +6,19 @@ import * as hbUser from '../src';
 
 const databaseName = 'hbUserTest';
 
-const findOrCreateUser = (userData, dispatcher) => (
-  dispatcher.dispatch('entity.User.findOne', {
+const findOrCreateUser = async (userData, dispatcher) => {
+  const user = await dispatcher.dispatch('entity.User.findOne', {
     query: {
       email: userData.email,
     },
-  }).then((user) => {
-    if (user) {
-      return user;
-    }
+  });
 
-    return dispatcher.dispatch('entity.User.createOne', userData);
-  })
-);
+  if (user) {
+    return user;
+  }
+
+  return dispatcher.dispatch('entity.User.createOne', userData);
+};
 
 describe('register()', () => {
   let server;
@@ -54,6 +54,23 @@ describe('register()', () => {
       }
 
       dispatcher = server.plugins['hapi-octobus'].eventDispatcher;
+
+      server.route({
+        path: '/users',
+        method: 'GET',
+        async handler(request, reply) {
+          try {
+            const { eventDispatcher } = request;
+            const users = await eventDispatcher.dispatch('entity.User.findMany').then((c) => c.toArray());
+            reply(users);
+          } catch (findUsersErr) {
+            reply(findUsersErr);
+          }
+        },
+        config: {
+          auth: 'jwt',
+        },
+      });
 
       return findOrCreateUser({
         username: 'viczam',

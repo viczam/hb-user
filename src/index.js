@@ -7,12 +7,11 @@ import validateJWT from './lib/validateJWT';
 import setupServices from './services';
 
 export const register = (server, options, next) => { // eslint-disable-line
-  const { error, value } = Joi.validate(options, pluginOptionsSchema);
+  const { error, value: pluginOptions } = Joi.validate(options, pluginOptionsSchema);
   if (error) {
     return next(error);
   }
 
-  const pluginOptions = value;
   const dispatcher = server.plugins['hapi-octobus'].eventDispatcher;
 
   setupServices({
