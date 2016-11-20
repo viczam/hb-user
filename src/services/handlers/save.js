@@ -1,9 +1,7 @@
 import bcrypt from 'bcryptjs';
-import _ from 'lodash';
 
 export default async ({ params, dispatch, next }) => {
-  const nextParams = _.omit(params, ['hashPassword']);
-  const { hashPassword } = params;
+  const { hashPassword, ...nextParams } = params;
 
   if (!nextParams.salt) {
     nextParams.salt = bcrypt.genSaltSync(10);
