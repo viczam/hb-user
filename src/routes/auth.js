@@ -20,6 +20,8 @@ export default [
       validate: {
         payload: _.pick(userSchema, ['username', 'password']),
       },
+      tags: ['api'],
+      description: 'User login',
     },
   },
 ];
