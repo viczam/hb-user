@@ -1,16 +1,26 @@
 import Joi from 'joi';
 import Boom from 'boom';
 import { decorators, applyDecorators } from 'octobus.js';
+import pick from 'lodash/pick';
+import userSchema from '../../schemas/user';
 
 const { withSchema, withLookups, withHandler } = decorators;
 
+
 const schema = Joi.object().keys({
-  username: Joi.string().required(),
-  password: Joi.string().required(),
+  user: Joi.object().keys(pick(userSchema, ['_id', 'username', 'password', 'salt'])).unknown(true).allow(null),
+  username: Joi.string().when('user', {
+    is: null,
+    then: Joi.required(),
+  }),
+  password: Joi.string().when('user', {
+    is: null,
+    then: Joi.required(),
+  }),
 }).required();
 
-const handler = async ({ username, password, User, UserEntity }) => {
-  const user = await UserEntity.findOne({ query: { username } });
+const handler = async ({ username, password, params, User, UserEntity }) => {
+  const user = params.user || await UserEntity.findOne({ query: { username } });
 
   if (!user) {
     throw Boom.badRequest('User not found!');
