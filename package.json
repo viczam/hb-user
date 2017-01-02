@@ -23,6 +23,7 @@
   ],
   "files": [
     "dist",
+    "src",
     "README.md"
   ],
   "author": "Victor Zamfir <zamfir.victor@gmail.com>",

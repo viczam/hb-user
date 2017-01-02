@@ -39,7 +39,9 @@ export const register = (server, options, next) => { // eslint-disable-line
       },
     });
 
-    server.route(routes);
+    if (pluginOptions.registerRoutes) {
+      server.route(routes);
+    }
   }).then(next, next);
 };
 

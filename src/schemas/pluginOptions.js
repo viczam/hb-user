@@ -13,4 +13,5 @@ export default {
     schema: Joi.object().default(userSchema),
     collectionName: Joi.string().default('User'),
   }).default({}).unknown(true).required(),
+  registerRoutes: Joi.boolean().default(true),
 };
