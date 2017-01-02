@@ -6,7 +6,6 @@ import userSchema from '../../schemas/user';
 
 const { withSchema, withLookups, withHandler } = decorators;
 
-
 const schema = Joi.object().keys({
   user: Joi.object().keys(pick(userSchema, ['_id', 'username', 'password', 'salt'])).unknown(true).allow(null),
   username: Joi.string().when('user', {
